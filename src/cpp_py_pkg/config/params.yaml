@@ -1,0 +1,7 @@
+/callback_param_node:
+  ros__parameters:
+    autonomous_mode: false
+    battery_percentage_warning: 10.0
+    camera_device_port: /dev/ttyACM1
+    use_sim_time: false
+
