@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 # Example modified from https://roboticsbackend.com/ros2-rclpy-parameter-callback/
 
 import rclpy
@@ -16,9 +18,12 @@ import time
 class TestParamsCallback(Node):
     def __init__(self):
         super().__init__('callback_param_node')
-        self.declare_parameter('camera_device_port', '/dev/ttyACM0')
-        self.declare_parameter('autonomous_mode', False)
-        self.declare_parameter('battery_percentage_warning', 15.0)
+        # self.declare_parameter('camera_device_port', '/dev/ttyACM0')
+        self.declare_parameter('camera_device_port', rclpy.Parameter.Type.STRING)
+        # self.declare_parameter('autonomous_mode', False)
+        self.declare_parameter('autonomous_mode', rclpy.Parameter.Type.BOOL)
+        # self.declare_parameter('battery_percentage_warning', 15.0)
+        self.declare_parameter('battery_percentage_warning', rclpy.Parameter.Type.DOUBLE)
         
         self.camera_device_port_ = self.get_parameter('camera_device_port').value
         self.autonomous_mode_ = self.get_parameter('autonomous_mode').value
@@ -49,8 +54,13 @@ class TestParamsCallback(Node):
         # # with the timer callback in the node's default callback group (sharing the queue with other callbacks)
         # self.timer = self.create_timer(1, self.camera_monitoring_callback)
 
-
+        # Create a publisher to publish the autonomous mode status
         self.autonomous_mode_publisher_ = self.create_publisher(Bool, 'autonomous_mode', 10)
+        # Publish the autonomous mode status
+        msg = Bool()
+        msg.data = self.autonomous_mode_
+        self.autonomous_mode_publisher_.publish(msg)
+        self.get_logger().info("Published autonomous mode status: " + str(self.autonomous_mode_))
 
     # Timer callback to simulate camera monitoring and restart
     def camera_monitoring_callback(self):
