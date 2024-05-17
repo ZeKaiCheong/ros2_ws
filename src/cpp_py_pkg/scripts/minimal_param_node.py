@@ -14,6 +14,8 @@ class MinimalParam(rclpy.node.Node):
         
         # --------------- IGNORE THIS SECTION IF YOU WANT TO FOLLOW BEST PRACTICES AND DECLARE ALL YOUR PARAMETERS BEFORE USING THEM ---------------
 
+        # Possible use case is if the node is not aware of all parameters it should have when it is started.
+
         # # Make allow_undeclared_parameters=True to allow undeclared parameters.
         # param_str = Parameter('my_str', Parameter.Type.STRING, 'Set from code')
         # self.set_parameters([param_str])    # Parameters WILL be implicitly declared before being set even if they were not declared beforehand. Parameter overrides are ignored by this method. For each successfully set parameter, a ParameterEvent message is published.
