@@ -16,19 +16,23 @@ class MinimalParam(rclpy.node.Node):
 
         # Possible use case is if the node is not aware of all parameters it should have when it is started.
 
-        # # Make allow_undeclared_parameters=True to allow undeclared parameters.
-        # param_str = Parameter('my_str', Parameter.Type.STRING, 'Set from code')
-        # self.set_parameters([param_str])    # Parameters WILL be implicitly declared before being set even if they were not declared beforehand. Parameter overrides are ignored by this method. For each successfully set parameter, a ParameterEvent message is published.
-        # self.get_logger().info('Previously undeclared but now declared str: %s' % str(param_str.value))
+        # Make automatically_declare_parameters_from_overrides=True to implicitly declare parameters when initialising the value of an undeclared parameter from the command line:
+        # ~$ ros2 run python_parameters minimal_param_node --ros-args -p declared_str:="Initialised from command line"
 
-        # Make automatically_declare_parameters_from_overrides=True to declare parameters from overrides such as:
-        # ros2 run python_parameters minimal_param_node --ros-args -p nondeclared_str:="Set from command line"
+        # # Make allow_undeclared_parameters=True to set parameters in code during runtime without declaring them:
+        # param_str = Parameter('undeclared_str', Parameter.Type.STRING, 'Set from code')
+        # self.set_parameters([param_str])     # Does NOT implicitly declare the parameter. For each successfully set parameter, a ParameterEvent message is published.
+        # self.get_logger().info('Undeclared parameter \'%s\' with value \'%s\'' % (param_str.name, param_str.value))
+        # # Because it is a dynamic (not declared) parameter, it can be removed from the node during runtime using:
+        # ~$ ros2 param delete /minimal_param_node undeclared_str
+        # # You can also set undeclared parameters from the command line during runtime using:
+        # ~$ ros2 param set /minimal_param_node undeclared_str "Set from command line"
 
-        # Get undeclared parameters whilst keeping allow_undeclared_parameters=False
-        # Provide a default backup value to use if the parameter is not declared.
-        # Undeclared parameters will NOT be implicitly declared with backup value if it is used.
-        param_int = self.get_parameter_or('my_int', Parameter('default_int', Parameter.Type.INTEGER, 5))
-        self.get_logger().info('Undeclared int: %s' % param_int.value)
+        # Get parameter values without declaring them (allow_undeclared_parameters=False, automatically_declare_parameters_from_overrides=False)
+        # Provide a default backup value to use if the parameter was not declared.
+        # If the backup Parameter is used, it does not appear in the list of parameters using ros2 param list
+        param_str = self.get_parameter_or('undeclared_str', Parameter('backup_str', Parameter.Type.STRING, 'Backup parameter'))
+        self.get_logger().info('Getting parameter \'%s\' with value \'%s\'' % (param_str.name, param_str.value))
 
         # ------------------------------------------------------------- END OF SECTION -------------------------------------------------------------
         
